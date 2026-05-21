@@ -23,7 +23,7 @@ public interface TouristPackageRepository extends JpaRepository<TouristPackageEn
     List<TouristPackageEntity> findBySeason(SeasonEntity season);
     List<TouristPackageEntity> findByType(PackageTypeEntity type);
 
-    @Query("SELECT p FROM TouristPackage p WHERE p.status.name = 'AVAILABLE' " +
+    @Query("SELECT p FROM TouristPackageEntity p WHERE p.status.name = 'AVAILABLE' " +
             "AND (:destination IS NULL OR p.destination = :destination) " +
             "AND (:category IS NULL OR p.category = :category) " +
             "AND (:type IS NULL OR p.type = :type) " +

@@ -19,15 +19,15 @@ public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
     List<BookingEntity> findByStatus(StatusEntity status);
     List<BookingEntity> findByUserAndStatus(UserEntity user, StatusEntity status);
 
-    @Query("SELECT COUNT(b) FROM Booking b WHERE b.user = :user " +
+    @Query("SELECT COUNT(b) FROM BookingEntity b WHERE b.user = :user " +
             "AND b.status.name = 'CONFIRMED'")
     long countConfirmedBookingsByUser(@Param("user") UserEntity user);
 
-    @Query("SELECT b FROM Booking b WHERE b.status.name = 'PENDING_PAYMENT' " +
+    @Query("SELECT b FROM BookingEntity b WHERE b.status.name = 'PENDING_PAYMENT' " +
             "AND b.expiresAt <= :now")
     List<BookingEntity> findExpiredBookings(@Param("now") LocalDateTime now);
 
-    @Query("SELECT b FROM Booking b WHERE b.createdAt BETWEEN :startDate AND :endDate " +
+    @Query("SELECT b FROM BookingEntity b WHERE b.createdAt BETWEEN :startDate AND :endDate " +
             "AND b.status.name != 'CANCELLED'")
     List<BookingEntity> findByDateRangeExcludingCancelled(
             @Param("startDate") LocalDateTime startDate,

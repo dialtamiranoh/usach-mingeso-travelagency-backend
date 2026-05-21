@@ -14,12 +14,12 @@ import java.util.List;
 public interface PromotionRepository extends JpaRepository<PromotionEntity, Long> {
     List<PromotionEntity> findByStatus(StatusEntity status);
 
-    @Query("SELECT p FROM Promotion p WHERE p.status.name = 'ACTIVE' " +
+    @Query("SELECT p FROM PromotionEntity p WHERE p.status.name = 'ACTIVE' " +
             "AND (p.startDate IS NULL OR p.startDate <= :now) " +
             "AND (p.endDate IS NULL OR p.endDate >= :now)")
     List<PromotionEntity> findActivePromotions(@Param("now") LocalDateTime now);
 
-    @Query("SELECT p FROM Promotion p " +
+    @Query("SELECT p FROM PromotionEntity p " +
             "JOIN p.touristPackages tp " +
             "WHERE tp.id = :packageId " +
             "AND p.status.name = 'ACTIVE' " +

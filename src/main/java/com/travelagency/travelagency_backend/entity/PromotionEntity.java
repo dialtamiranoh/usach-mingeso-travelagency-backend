@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "promotions")
@@ -45,6 +46,9 @@ public class PromotionEntity {
     @JoinColumn(name = "status_id", nullable = false)
     private StatusEntity status;
 
+    @ManyToMany(mappedBy = "promotions", fetch = FetchType.LAZY)
+    private List<TouristPackageEntity> touristPackages;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -52,4 +56,6 @@ public class PromotionEntity {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
+
 }

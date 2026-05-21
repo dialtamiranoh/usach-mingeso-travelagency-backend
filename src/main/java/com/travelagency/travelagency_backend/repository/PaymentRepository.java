@@ -19,7 +19,7 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
     boolean existsByBooking(BookingEntity booking);
     List<PaymentEntity> findByStatus(StatusEntity status);
 
-    @Query("SELECT p FROM Payment p WHERE p.paidAt BETWEEN :startDate AND :endDate")
+    @Query("SELECT p FROM PaymentEntity p WHERE p.paidAt BETWEEN :startDate AND :endDate")
     List<PaymentEntity> findByDateRange(
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
