@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,11 +34,13 @@ public class TouristPackageController {
     private final SeasonService seasonService;
     private final StatusService statusService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<TouristPackageEntity>> findAll() {
         return ResponseEntity.ok(touristPackageService.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<TouristPackageEntity> findById(@PathVariable Long id) {
         return touristPackageService.findById(id)
@@ -45,6 +48,7 @@ public class TouristPackageController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/status/{statusId}")
     public ResponseEntity<List<TouristPackageEntity>> findByStatus(@PathVariable Long statusId) {
         return statusService.findById(statusId)
@@ -52,6 +56,7 @@ public class TouristPackageController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/available")
     public ResponseEntity<List<TouristPackageEntity>> findAvailableWithFilters(
             @RequestParam(required = false) Long destinationId,
@@ -73,11 +78,13 @@ public class TouristPackageController {
                 destination, category, type, minPrice, maxPrice, startDate, endDate));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<TouristPackageEntity> save(@RequestBody TouristPackageEntity touristPackage) {
         return ResponseEntity.status(HttpStatus.CREATED).body(touristPackageService.save(touristPackage));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<TouristPackageEntity> update(@PathVariable Long id, @RequestBody TouristPackageEntity touristPackage) {
         if (touristPackageService.findById(id).isEmpty()) {
@@ -87,6 +94,7 @@ public class TouristPackageController {
         return ResponseEntity.ok(touristPackageService.update(touristPackage));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         if (touristPackageService.findById(id).isEmpty()) {

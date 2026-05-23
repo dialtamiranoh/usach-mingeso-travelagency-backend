@@ -8,6 +8,7 @@ import com.travelagency.travelagency_backend.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -19,11 +20,13 @@ public class PackageTypeController {
     private final PackageTypeService packageTypeService;
     private final StatusService statusService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PackageTypeEntity>> findAll() {
         return ResponseEntity.ok(packageTypeService.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PackageTypeEntity> findById(@PathVariable Long id) {
         return packageTypeService.findById(id)
@@ -31,6 +34,7 @@ public class PackageTypeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/status/{statusId}")
     public ResponseEntity<List<PackageTypeEntity>> findByStatus(@PathVariable Long statusId) {
         return statusService.findById(statusId)
@@ -38,11 +42,13 @@ public class PackageTypeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PackageTypeEntity> save(@RequestBody PackageTypeEntity packageType) {
         return ResponseEntity.status(HttpStatus.CREATED).body(packageTypeService.save(packageType));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PackageTypeEntity> update(@PathVariable Long id, @RequestBody PackageTypeEntity packageType) {
         if (packageTypeService.findById(id).isEmpty()) {
@@ -52,6 +58,7 @@ public class PackageTypeController {
         return ResponseEntity.ok(packageTypeService.update(packageType));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         if (packageTypeService.findById(id).isEmpty()) {

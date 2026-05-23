@@ -7,6 +7,7 @@ import com.travelagency.travelagency_backend.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -18,11 +19,13 @@ public class PromotionController {
     private final PromotionService promotionService;
     private final StatusService statusService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PromotionEntity>> findAll() {
         return ResponseEntity.ok(promotionService.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PromotionEntity> findById(@PathVariable Long id) {
         return promotionService.findById(id)
@@ -30,16 +33,19 @@ public class PromotionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/active")
     public ResponseEntity<List<PromotionEntity>> findActivePromotions() {
         return ResponseEntity.ok(promotionService.findActivePromotions());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/active/package/{packageId}")
     public ResponseEntity<List<PromotionEntity>> findActivePromotionsByPackageId(@PathVariable Long packageId) {
         return ResponseEntity.ok(promotionService.findActivePromotionsByPackageId(packageId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/status/{statusId}")
     public ResponseEntity<List<PromotionEntity>> findByStatus(@PathVariable Long statusId) {
         return statusService.findById(statusId)
@@ -47,11 +53,13 @@ public class PromotionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PromotionEntity> save(@RequestBody PromotionEntity promotion) {
         return ResponseEntity.status(HttpStatus.CREATED).body(promotionService.save(promotion));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PromotionEntity> update(@PathVariable Long id, @RequestBody PromotionEntity promotion) {
         if (promotionService.findById(id).isEmpty()) {
@@ -61,6 +69,7 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.update(promotion));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         if (promotionService.findById(id).isEmpty()) {

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,11 +23,13 @@ public class PaymentController {
     private final BookingService bookingService;
     private final StatusService statusService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PaymentEntity>> findAll() {
         return ResponseEntity.ok(paymentService.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PaymentEntity> findById(@PathVariable Long id) {
         return paymentService.findById(id)
@@ -34,6 +37,7 @@ public class PaymentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/booking/{bookingId}")
     public ResponseEntity<PaymentEntity> findByBooking(@PathVariable Long bookingId) {
         return bookingService.findById(bookingId)
@@ -43,6 +47,7 @@ public class PaymentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/transaction/{transactionCode}")
     public ResponseEntity<PaymentEntity> findByTransactionCode(@PathVariable String transactionCode) {
         return paymentService.findByTransactionCode(transactionCode)
@@ -50,6 +55,7 @@ public class PaymentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/status/{statusId}")
     public ResponseEntity<List<PaymentEntity>> findByStatus(@PathVariable Long statusId) {
         return statusService.findById(statusId)
@@ -57,6 +63,7 @@ public class PaymentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/date-range")
     public ResponseEntity<List<PaymentEntity>> findByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -64,11 +71,13 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.findByDateRange(startDate, endDate));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PaymentEntity> save(@RequestBody PaymentEntity payment) {
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.save(payment));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PaymentEntity> update(@PathVariable Long id, @RequestBody PaymentEntity payment) {
         if (paymentService.findById(id).isEmpty()) {
@@ -78,6 +87,7 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.update(payment));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         if (paymentService.findById(id).isEmpty()) {

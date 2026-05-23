@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,11 +25,13 @@ public class BookingController {
     private final TouristPackageService touristPackageService;
     private final StatusService statusService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @GetMapping
     public ResponseEntity<List<BookingEntity>> findAll() {
         return ResponseEntity.ok(bookingService.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<BookingEntity> findById(@PathVariable Long id) {
         return bookingService.findById(id)
@@ -36,6 +39,7 @@ public class BookingController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BookingEntity>> findByUser(@PathVariable Long userId) {
         return userService.findById(userId)
@@ -43,6 +47,7 @@ public class BookingController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/package/{packageId}")
     public ResponseEntity<List<BookingEntity>> findByTouristPackage(@PathVariable Long packageId) {
         return touristPackageService.findById(packageId)
@@ -50,6 +55,7 @@ public class BookingController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/status/{statusId}")
     public ResponseEntity<List<BookingEntity>> findByStatus(@PathVariable Long statusId) {
         return statusService.findById(statusId)
@@ -57,6 +63,7 @@ public class BookingController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/expired")
     public ResponseEntity<List<BookingEntity>> findExpiredBookings() {
         return ResponseEntity.ok(bookingService.findExpiredBookings());
@@ -74,6 +81,7 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.save(booking));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<BookingEntity> update(@PathVariable Long id, @RequestBody BookingEntity booking) {
         if (bookingService.findById(id).isEmpty()) {
@@ -83,6 +91,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.update(booking));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         if (bookingService.findById(id).isEmpty()) {
