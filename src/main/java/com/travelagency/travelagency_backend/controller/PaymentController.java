@@ -24,7 +24,7 @@ public class PaymentController {
     private final StatusService statusService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<PaymentEntity>> findAll() {
         return ResponseEntity.ok(paymentService.findAll());
     }

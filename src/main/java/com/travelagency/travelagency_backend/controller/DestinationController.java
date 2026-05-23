@@ -20,7 +20,7 @@ public class DestinationController {
     private final StatusService statusService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<DestinationEntity>> findAll() {
         return ResponseEntity.ok(destinationService.findAll());
     }

@@ -26,7 +26,7 @@ public class BookingController {
     private final StatusService statusService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<BookingEntity>> findAll() {
         return ResponseEntity.ok(bookingService.findAll());
     }
@@ -69,6 +69,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.findExpiredBookings());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/date-range")
     public ResponseEntity<List<BookingEntity>> findByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -76,6 +77,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.findByDateRangeExcludingCancelled(startDate, endDate));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<BookingEntity> save(@RequestBody BookingEntity booking) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.save(booking));

@@ -18,7 +18,7 @@ public class StatusController {
     private final StatusService statusService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<StatusEntity>> findAll() {
         return ResponseEntity.ok(statusService.findAll());
     }

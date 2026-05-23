@@ -20,7 +20,7 @@ public class PackageServiceController {
     private final StatusService statusService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<PackageServiceEntity>> findAll() {
         return ResponseEntity.ok(packageServiceService.findAll());
     }

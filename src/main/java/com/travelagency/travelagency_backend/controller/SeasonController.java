@@ -20,7 +20,7 @@ public class SeasonController {
     private final StatusService statusService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<SeasonEntity>> findAll() {
         return ResponseEntity.ok(seasonService.findAll());
     }

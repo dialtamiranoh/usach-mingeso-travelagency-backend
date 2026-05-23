@@ -21,7 +21,7 @@ public class PackageTypeController {
     private final StatusService statusService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<PackageTypeEntity>> findAll() {
         return ResponseEntity.ok(packageTypeService.findAll());
     }

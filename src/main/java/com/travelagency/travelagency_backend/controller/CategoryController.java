@@ -20,7 +20,7 @@ public class CategoryController {
     private final StatusService statusService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<CategoryEntity>> findAll() {
         return ResponseEntity.ok(categoryService.findAll());
     }

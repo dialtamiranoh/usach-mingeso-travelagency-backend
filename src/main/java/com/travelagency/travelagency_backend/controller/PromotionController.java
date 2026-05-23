@@ -20,7 +20,7 @@ public class PromotionController {
     private final StatusService statusService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<PromotionEntity>> findAll() {
         return ResponseEntity.ok(promotionService.findAll());
     }

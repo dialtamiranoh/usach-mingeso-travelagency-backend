@@ -35,7 +35,7 @@ public class TouristPackageController {
     private final StatusService statusService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<List<TouristPackageEntity>> findAll() {
         return ResponseEntity.ok(touristPackageService.findAll());
     }
