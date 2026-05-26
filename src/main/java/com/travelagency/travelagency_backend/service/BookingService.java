@@ -65,9 +65,6 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    public void deleteById(Long id) {
-        bookingRepository.deleteById(id);
-    }
 
     public boolean existsById(Long id) {
         return bookingRepository.existsById(id);
@@ -194,7 +191,61 @@ public class BookingService {
         booking.setFinalAmount(finalAmount);
         booking.setDiscountDetail(String.join(", ", discountDetails));
         booking.setStatus(pendingStatus);
-        booking.setExpiresAt(LocalDateTime.now().plusHours(24));
+        booking.setExpiresAt(LocalDateTime.now().plusSeconds(60));
+
+        return bookingRepository.save(booking);
+    }
+
+    @Transactional
+    public BookingEntity updateBooking(Long bookingId, StatusEntity newStatus, int newPassengerCount) {
+        BookingEntity booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+
+        String currentStatus = booking.getStatus().getName();
+
+        // Estados finales
+        if (currentStatus.equals("CANCELLED") || currentStatus.equals("EXPIRED")) {
+            throw new RuntimeException("No se puede modificar una reserva en estado " + currentStatus);
+        }
+
+        // EXPIRED solo lo asigna el sistema
+        if (newStatus.getName().equals("EXPIRED")) {
+            throw new RuntimeException("El estado EXPIRED solo lo asigna el sistema");
+        }
+
+        TouristPackageEntity pkg = booking.getTouristPackage();
+        int diff = newPassengerCount - booking.getPassengerCount();
+
+        // Validar cupos si aumentan pasajeros
+        if (diff > 0 && pkg.getAvailableSlots() < diff) {
+            throw new RuntimeException("No hay suficientes cupos disponibles");
+        }
+
+        // Si se cancela, liberar todos los cupos
+        if (newStatus.getName().equals("CANCELLED")) {
+            pkg.setAvailableSlots(pkg.getAvailableSlots() + booking.getPassengerCount());
+        } else {
+            pkg.setAvailableSlots(pkg.getAvailableSlots() - diff);
+        }
+
+        // Actualizar estado del paquete
+        if (pkg.getAvailableSlots() == 0) {
+            StatusEntity soldOut = statusRepository
+                    .findByNameAndEntityType("SOLD_OUT", "PACKAGE")
+                    .orElseThrow(() -> new RuntimeException("Estado SOLD_OUT no encontrado"));
+            pkg.setStatus(soldOut);
+        } else if (pkg.getStatus().getName().equals("SOLD_OUT") && pkg.getAvailableSlots() > 0) {
+            StatusEntity available = statusRepository
+                    .findByNameAndEntityType("AVAILABLE", "PACKAGE")
+                    .orElseThrow(() -> new RuntimeException("Estado AVAILABLE no encontrado"));
+            pkg.setStatus(available);
+        }
+        touristPackageRepository.save(pkg);
+
+        booking.setPassengerCount(newPassengerCount);
+        booking.setStatus(newStatus);
+        booking.setBaseAmount(pkg.getPrice().multiply(BigDecimal.valueOf(newPassengerCount)));
+        booking.setFinalAmount(booking.getBaseAmount().subtract(booking.getDiscountAmount()));
 
         return bookingRepository.save(booking);
     }

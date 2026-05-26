@@ -2,6 +2,7 @@
 package com.travelagency.travelagency_backend.controller;
 
 import com.travelagency.travelagency_backend.entity.BookingEntity;
+import com.travelagency.travelagency_backend.entity.StatusEntity;
 import com.travelagency.travelagency_backend.service.BookingService;
 import com.travelagency.travelagency_backend.service.StatusService;
 import com.travelagency.travelagency_backend.service.TouristPackageService;
@@ -91,10 +92,13 @@ public class BookingController {
     public ResponseEntity<?> createBooking(
             @RequestParam Long packageId,
             @RequestParam int passengerCount,
+            @RequestParam(required = false) String keycloakId,
             Authentication authentication) {
         try {
-            String keycloakId = authentication.getName();
-            BookingEntity booking = bookingService.createBooking(packageId, keycloakId, passengerCount);
+            String targetKeycloakId = (keycloakId != null && !keycloakId.isEmpty())
+                    ? keycloakId
+                    : authentication.getName();
+            BookingEntity booking = bookingService.createBooking(packageId, targetKeycloakId, passengerCount);
             return ResponseEntity.status(HttpStatus.CREATED).body(booking);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -118,12 +122,17 @@ public class BookingController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        if (bookingService.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+    @PutMapping("/{id}/update")
+    public ResponseEntity<?> updateBooking(
+            @PathVariable Long id,
+            @RequestParam int passengerCount,
+            @RequestParam Long statusId) {
+        try {
+            StatusEntity status = statusService.findById(statusId)
+                    .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+            return ResponseEntity.ok(bookingService.updateBooking(id, status, passengerCount));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        bookingService.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }
