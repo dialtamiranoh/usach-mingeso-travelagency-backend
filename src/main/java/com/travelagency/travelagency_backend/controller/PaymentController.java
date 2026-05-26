@@ -72,12 +72,6 @@ public class PaymentController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
-    public ResponseEntity<PaymentEntity> save(@RequestBody PaymentEntity payment) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.save(payment));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PaymentEntity> update(@PathVariable Long id, @RequestBody PaymentEntity payment) {
         if (paymentService.findById(id).isEmpty()) {
@@ -95,5 +89,20 @@ public class PaymentController {
         }
         paymentService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+    @PostMapping("/process")
+    public ResponseEntity<?> processPayment(
+            @RequestParam Long bookingId,
+            @RequestParam String cardNumber,
+            @RequestParam String cardExpiry,
+            @RequestParam String cardCvv) {
+        try {
+            PaymentEntity payment = paymentService.processPayment(bookingId, cardNumber, cardExpiry, cardCvv);
+            return ResponseEntity.status(HttpStatus.CREATED).body(payment);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
