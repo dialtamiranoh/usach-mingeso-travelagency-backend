@@ -1,6 +1,7 @@
 // PromotionEntity.java
 package com.travelagency.travelagency_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -34,7 +35,7 @@ public class PromotionEntity {
     private Integer minBookingsHistory;
 
     @Column(name = "is_accumulable", nullable = false)
-    private boolean isAccumulable;
+    private Boolean isAccumulable;
 
     @Column(name = "start_date")
     private LocalDateTime startDate;
@@ -46,6 +47,7 @@ public class PromotionEntity {
     @JoinColumn(name = "status_id", nullable = false)
     private StatusEntity status;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "promotions", fetch = FetchType.LAZY)
     private List<TouristPackageEntity> touristPackages;
 

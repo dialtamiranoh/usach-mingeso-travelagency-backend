@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,13 +26,13 @@ public class BookingController {
     private final TouristPackageService touristPackageService;
     private final StatusService statusService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping({"", "/"})
     public ResponseEntity<List<BookingEntity>> findAll() {
         return ResponseEntity.ok(bookingService.findAll());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @GetMapping("/{id}")
     public ResponseEntity<BookingEntity> findById(@PathVariable Long id) {
         return bookingService.findById(id)
@@ -39,10 +40,18 @@ public class BookingController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BookingEntity>> findByUser(@PathVariable Long userId) {
         return userService.findById(userId)
+                .map(user -> ResponseEntity.ok(bookingService.findByUser(user)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+    @GetMapping("/keycloak/{keycloakId}")
+    public ResponseEntity<List<BookingEntity>> findByKeycloakId(@PathVariable String keycloakId) {
+        return userService.findByKeycloakId(keycloakId)
                 .map(user -> ResponseEntity.ok(bookingService.findByUser(user)))
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -77,10 +86,25 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.findByDateRangeExcludingCancelled(startDate, endDate));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+    @PostMapping("/create")
+    public ResponseEntity<?> createBooking(
+            @RequestParam Long packageId,
+            @RequestParam int passengerCount,
+            Authentication authentication) {
+        try {
+            String keycloakId = authentication.getName();
+            BookingEntity booking = bookingService.createBooking(packageId, keycloakId, passengerCount);
+            return ResponseEntity.status(HttpStatus.CREATED).body(booking);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping({"", "/"})
     public ResponseEntity<BookingEntity> save(@RequestBody BookingEntity booking) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.save(booking));
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.update(booking));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
