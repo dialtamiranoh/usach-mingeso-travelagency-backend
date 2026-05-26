@@ -33,4 +33,27 @@ public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
+
+    @Query("SELECT b.id, b.createdAt, b.user.fullName, b.touristPackage.name, " +
+            "b.passengerCount, b.finalAmount, b.status.name " +
+            "FROM BookingEntity b " +
+            "WHERE b.createdAt BETWEEN :startDate AND :endDate " +
+            "AND b.status.name != 'CANCELLED' " +
+            "ORDER BY b.createdAt ASC")
+    List<Object[]> getSalesReport(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
+
+    @Query("SELECT b.touristPackage.id, b.touristPackage.name, b.touristPackage.destination.name, " +
+            "COUNT(b), SUM(b.passengerCount), SUM(b.finalAmount) " +
+            "FROM BookingEntity b " +
+            "WHERE b.createdAt BETWEEN :startDate AND :endDate " +
+            "AND b.status.name != 'CANCELLED' " +
+            "GROUP BY b.touristPackage.id, b.touristPackage.name, b.touristPackage.destination.name " +
+            "ORDER BY COUNT(b) DESC, b.touristPackage.name ASC")
+    List<Object[]> getPackageRanking(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
 }
