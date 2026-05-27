@@ -31,7 +31,8 @@ public class StatusController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     @GetMapping("/entity-type/{entityType}")
     public ResponseEntity<List<StatusEntity>> findByEntityType(@PathVariable String entityType) {
         return ResponseEntity.ok(statusService.findByEntityType(entityType));

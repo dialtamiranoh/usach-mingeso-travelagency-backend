@@ -37,7 +37,7 @@ public class PaymentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @GetMapping("/booking/{bookingId}")
     public ResponseEntity<PaymentEntity> findByBooking(@PathVariable Long bookingId) {
         return bookingService.findById(bookingId)

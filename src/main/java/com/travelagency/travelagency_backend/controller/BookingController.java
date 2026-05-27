@@ -27,7 +27,7 @@ public class BookingController {
     private final TouristPackageService touristPackageService;
     private final StatusService statusService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @GetMapping({"", "/"})
     public ResponseEntity<List<BookingEntity>> findAll() {
         return ResponseEntity.ok(bookingService.findAll());
@@ -121,7 +121,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.update(booking));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @PutMapping("/{id}/update")
     public ResponseEntity<?> updateBooking(
             @PathVariable Long id,

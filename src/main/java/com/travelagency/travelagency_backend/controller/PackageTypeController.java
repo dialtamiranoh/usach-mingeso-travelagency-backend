@@ -20,13 +20,13 @@ public class PackageTypeController {
     private final PackageTypeService packageTypeService;
     private final StatusService statusService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     @GetMapping({"", "/"})
     public ResponseEntity<List<PackageTypeEntity>> findAll() {
         return ResponseEntity.ok(packageTypeService.findAll());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     @GetMapping("/{id}")
     public ResponseEntity<PackageTypeEntity> findById(@PathVariable Long id) {
         return packageTypeService.findById(id)

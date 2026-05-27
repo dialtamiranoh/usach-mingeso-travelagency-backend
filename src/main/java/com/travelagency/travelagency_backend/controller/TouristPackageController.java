@@ -34,13 +34,13 @@ public class TouristPackageController {
     private final SeasonService seasonService;
     private final StatusService statusService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     @GetMapping({"", "/"})
     public ResponseEntity<List<TouristPackageEntity>> findAll() {
         return ResponseEntity.ok(touristPackageService.findAll());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     @GetMapping("/{id}")
     public ResponseEntity<TouristPackageEntity> findById(@PathVariable Long id) {
         return touristPackageService.findById(id)
@@ -56,7 +56,7 @@ public class TouristPackageController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     @GetMapping("/available")
     public ResponseEntity<List<TouristPackageEntity>> findAvailableWithFilters(
             @RequestParam(required = false) Long destinationId,

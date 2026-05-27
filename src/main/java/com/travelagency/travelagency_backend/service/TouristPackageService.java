@@ -49,6 +49,7 @@ public class TouristPackageService {
         return touristPackageRepository.findByType(type);
     }
 
+
     public List<TouristPackageEntity> findAvailableWithFilters(
             DestinationEntity destination,
             CategoryEntity category,
@@ -57,8 +58,18 @@ public class TouristPackageService {
             BigDecimal maxPrice,
             LocalDate startDate,
             LocalDate endDate) {
-        return touristPackageRepository.findAvailableWithFilters(
-                destination, category, type, minPrice, maxPrice, startDate, endDate);
+
+        List<TouristPackageEntity> all = touristPackageRepository.findAvailablePackages();
+
+        return all.stream()
+                .filter(p -> destination == null || p.getDestination().getId().equals(destination.getId()))
+                .filter(p -> category == null || p.getCategory().getId().equals(category.getId()))
+                .filter(p -> type == null || p.getType().getId().equals(type.getId()))
+                .filter(p -> minPrice == null || p.getPrice().compareTo(minPrice) >= 0)
+                .filter(p -> maxPrice == null || p.getPrice().compareTo(maxPrice) <= 0)
+                .filter(p -> startDate == null || !p.getStartDate().isBefore(startDate))
+                .filter(p -> endDate == null || !p.getEndDate().isAfter(endDate))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     public TouristPackageEntity save(TouristPackageEntity touristPackage) {

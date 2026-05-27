@@ -23,21 +23,27 @@ public interface TouristPackageRepository extends JpaRepository<TouristPackageEn
     List<TouristPackageEntity> findBySeason(SeasonEntity season);
     List<TouristPackageEntity> findByType(PackageTypeEntity type);
 
-    @Query("SELECT p FROM TouristPackageEntity p WHERE p.status.name = 'AVAILABLE' " +
-            "AND (:destination IS NULL OR p.destination = :destination) " +
-            "AND (:category IS NULL OR p.category = :category) " +
-            "AND (:type IS NULL OR p.type = :type) " +
-            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
-            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
-            "AND (:startDate IS NULL OR p.startDate >= :startDate) " +
-            "AND (:endDate IS NULL OR p.endDate <= :endDate)")
+    @Query(value = "SELECT p.* FROM tourist_packages p " +
+            "JOIN statuses s ON p.status_id = s.id " +
+            "WHERE s.name = 'AVAILABLE' " +
+            "AND (:destinationId IS NULL OR p.destination_id = :destinationId) " +
+            "AND (:categoryId IS NULL OR p.category_id = :categoryId) " +
+            "AND (:typeId IS NULL OR p.package_type_id = :typeId) " +
+            "AND (:minPrice IS NULL OR p.price >= CAST(:minPrice AS NUMERIC)) " +
+            "AND (:maxPrice IS NULL OR p.price <= CAST(:maxPrice AS NUMERIC)) " +
+            "AND (:startDate IS NULL OR p.start_date >= CAST(:startDate AS DATE)) " +
+            "AND (:endDate IS NULL OR p.end_date <= CAST(:endDate AS DATE))",
+            nativeQuery = true)
     List<TouristPackageEntity> findAvailableWithFilters(
-            @Param("destination") DestinationEntity destination,
-            @Param("category") CategoryEntity category,
-            @Param("type") PackageTypeEntity type,
+            @Param("destinationId") Long destinationId,
+            @Param("categoryId") Long categoryId,
+            @Param("typeId") Long typeId,
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("SELECT p FROM TouristPackageEntity p WHERE p.status.name = 'AVAILABLE'")
+    List<TouristPackageEntity> findAvailablePackages();
 }
