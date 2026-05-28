@@ -38,6 +38,12 @@ class UserControllerTest {
     private UserService userService;
 
     @MockitoBean
+    private com.travelagency.travelagency_backend.repository.StatusRepository statusRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.UserRepository userRepository;
+
+    @MockitoBean
     private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
 
     private UserEntity user;
