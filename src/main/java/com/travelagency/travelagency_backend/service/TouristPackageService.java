@@ -73,10 +73,12 @@ public class TouristPackageService {
     }
 
     public TouristPackageEntity save(TouristPackageEntity touristPackage) {
+        validatePackage(touristPackage);
         return touristPackageRepository.save(touristPackage);
     }
 
     public TouristPackageEntity update(TouristPackageEntity touristPackage) {
+        validatePackage(touristPackage);
         return touristPackageRepository.save(touristPackage);
     }
 
@@ -87,4 +89,18 @@ public class TouristPackageService {
     public boolean existsById(Long id) {
         return touristPackageRepository.existsById(id);
     }
+
+    private void validatePackage(TouristPackageEntity pkg) {
+        if (pkg.getPrice() == null || pkg.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("El precio del paquete debe ser mayor que cero");
+        }
+        if (pkg.getTotalSlots() <= 0) {
+            throw new RuntimeException("Los cupos totales deben ser mayores que cero");
+        }
+        if (pkg.getStartDate() != null && pkg.getEndDate() != null
+                && !pkg.getEndDate().isAfter(pkg.getStartDate())) {
+            throw new RuntimeException("La fecha de término debe ser posterior a la fecha de inicio");
+        }
+    }
+
 }
