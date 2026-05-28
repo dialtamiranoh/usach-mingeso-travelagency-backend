@@ -23,6 +23,9 @@ public class ReportController {
     public ResponseEntity<?> getSalesReport(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().body("La fecha de inicio no puede ser posterior a la fecha de término");
+        }
         try {
             List<Map<String, Object>> report = reportService.getSalesReport(startDate, endDate);
             return ResponseEntity.ok(report);
@@ -30,12 +33,14 @@ public class ReportController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ranking")
     public ResponseEntity<?> getPackageRanking(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().body("La fecha de inicio no puede ser posterior a la fecha de término");
+        }
         try {
             List<Map<String, Object>> ranking = reportService.getPackageRanking(startDate, endDate);
             return ResponseEntity.ok(ranking);
