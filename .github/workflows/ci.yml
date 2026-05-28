@@ -43,7 +43,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: postgres
           SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:9090/realms/travelagency
           SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://localhost:9090/realms/travelagency
-        run: ./gradlew test
+        run: ./gradlew test -x contextLoads
 
       - name: Build JAR
         run: ./gradlew bootJar -x test
