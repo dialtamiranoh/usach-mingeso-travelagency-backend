@@ -44,6 +44,33 @@ class UserControllerTest {
     private com.travelagency.travelagency_backend.repository.UserRepository userRepository;
 
     @MockitoBean
+    private com.travelagency.travelagency_backend.repository.BookingRepository bookingRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.TouristPackageRepository touristPackageRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.PromotionRepository promotionRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.PaymentRepository paymentRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.CategoryRepository categoryRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.DestinationRepository destinationRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.PackageTypeRepository packageTypeRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.SeasonRepository seasonRepository;
+
+    @MockitoBean
+    private com.travelagency.travelagency_backend.repository.PackageServiceRepository packageServiceRepository;
+
+    @MockitoBean
     private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
 
     private UserEntity user;
