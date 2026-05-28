@@ -8,6 +8,7 @@ import com.travelagency.travelagency_backend.entity.PackageTypeEntity;
 import com.travelagency.travelagency_backend.entity.SeasonEntity;
 import com.travelagency.travelagency_backend.entity.StatusEntity;
 import com.travelagency.travelagency_backend.repository.TouristPackageRepository;
+import com.travelagency.travelagency_backend.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -82,9 +83,22 @@ public class TouristPackageService {
         return touristPackageRepository.save(touristPackage);
     }
 
+    private final BookingRepository bookingRepository;
+
     public void deleteById(Long id) {
+        TouristPackageEntity pkg = touristPackageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paquete no encontrado"));
+
+        boolean hasActiveBookings = bookingRepository.findByTouristPackage(pkg).stream()
+                .anyMatch(b -> b.getStatus().getName().equals("PENDING_PAYMENT")
+                        || b.getStatus().getName().equals("CONFIRMED"));
+
+        if (hasActiveBookings) {
+            throw new RuntimeException("No se puede eliminar un paquete con reservas activas");
+        }
         touristPackageRepository.deleteById(id);
     }
+
 
     public boolean existsById(Long id) {
         return touristPackageRepository.existsById(id);
