@@ -20,7 +20,7 @@ public class PackageTypeController {
     private final PackageTypeService packageTypeService;
     private final StatusService statusService;
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
+    @PreAuthorize("isAuthenticated() or isAnonymous()")
     @GetMapping({"", "/"})
     public ResponseEntity<List<PackageTypeEntity>> findAll() {
         return ResponseEntity.ok(packageTypeService.findAll());

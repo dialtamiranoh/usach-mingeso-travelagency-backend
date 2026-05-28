@@ -19,7 +19,7 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final StatusService statusService;
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
+    @PreAuthorize("isAuthenticated() or isAnonymous()")
     @GetMapping({"", "/"})
     public ResponseEntity<List<CategoryEntity>> findAll() {
         return ResponseEntity.ok(categoryService.findAll());

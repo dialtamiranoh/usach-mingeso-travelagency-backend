@@ -19,7 +19,7 @@ public class DestinationController {
     private final DestinationService destinationService;
     private final StatusService statusService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("isAuthenticated() or isAnonymous()")
     @GetMapping({"", "/"})
     public ResponseEntity<List<DestinationEntity>> findAll() {
         return ResponseEntity.ok(destinationService.findAll());
