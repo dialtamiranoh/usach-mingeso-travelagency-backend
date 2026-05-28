@@ -30,8 +30,13 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
                         .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/api/tourist-packages/available").permitAll()
+                        .requestMatchers("/api/tourist-packages/{id}").permitAll()
+                        .requestMatchers("/api/destinations").permitAll()
+                        .requestMatchers("/api/categories").permitAll()
+                        .requestMatchers("/api/package-types").permitAll()
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

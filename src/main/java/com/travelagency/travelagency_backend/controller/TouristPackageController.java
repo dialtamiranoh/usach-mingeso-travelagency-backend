@@ -56,7 +56,7 @@ public class TouristPackageController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
+    @PreAuthorize("isAuthenticated() or isAnonymous()")
     @GetMapping("/available")
     public ResponseEntity<List<TouristPackageEntity>> findAvailableWithFilters(
             @RequestParam(required = false) Long destinationId,
@@ -84,8 +84,8 @@ public class TouristPackageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(touristPackageService.save(touristPackage));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated() or isAnonymous()")
+    @GetMapping("/{id}")
     public ResponseEntity<TouristPackageEntity> update(@PathVariable Long id, @RequestBody TouristPackageEntity touristPackage) {
         if (touristPackageService.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
