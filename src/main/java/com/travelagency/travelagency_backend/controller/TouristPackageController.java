@@ -84,8 +84,8 @@ public class TouristPackageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(touristPackageService.save(touristPackage));
     }
 
-    @PreAuthorize("isAuthenticated() or isAnonymous()")
-    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
     public ResponseEntity<TouristPackageEntity> update(@PathVariable Long id, @RequestBody TouristPackageEntity touristPackage) {
         if (touristPackageService.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
