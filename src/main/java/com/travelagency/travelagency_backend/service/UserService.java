@@ -3,6 +3,7 @@ package com.travelagency.travelagency_backend.service;
 import com.travelagency.travelagency_backend.entity.UserEntity;
 import com.travelagency.travelagency_backend.repository.UserRepository;
 import com.travelagency.travelagency_backend.repository.StatusRepository;
+import com.travelagency.travelagency_backend.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -42,8 +43,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    private final BookingRepository bookingRepository;
+
     public void deleteById(Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        boolean hasBookings = !bookingRepository.findByUser(user).isEmpty();
+
+        if (hasBookings) {
+            throw new RuntimeException("No se puede eliminar un usuario con historial de reservas");
+        }
         userRepository.deleteById(id);
     }
-
 }

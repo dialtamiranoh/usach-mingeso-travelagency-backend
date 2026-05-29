@@ -47,9 +47,6 @@ public class BookingService {
         return bookingRepository.findByStatus(status);
     }
 
-    public List<BookingEntity> findByUserAndStatus(UserEntity user, StatusEntity status) {
-        return bookingRepository.findByUserAndStatus(user, status);
-    }
 
     public List<BookingEntity> findExpiredBookings() {
         return bookingRepository.findExpiredBookings(LocalDateTime.now());
