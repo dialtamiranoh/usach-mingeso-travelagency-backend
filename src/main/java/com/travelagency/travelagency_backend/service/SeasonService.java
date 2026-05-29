@@ -23,10 +23,6 @@ public class SeasonService {
         return seasonRepository.findById(id);
     }
 
-    public Optional<SeasonEntity> findByName(String name) {
-        return seasonRepository.findByName(name);
-    }
-
     public List<SeasonEntity> findByStatus(StatusEntity status) {
         return seasonRepository.findByStatus(status);
     }
@@ -43,7 +39,4 @@ public class SeasonService {
         seasonRepository.deleteById(id);
     }
 
-    public boolean existsByName(String name) {
-        return seasonRepository.existsByName(name);
-    }
 }

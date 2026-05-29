@@ -23,10 +23,6 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
-    public Optional<CategoryEntity> findByName(String name) {
-        return categoryRepository.findByName(name);
-    }
-
     public List<CategoryEntity> findByStatus(StatusEntity status) {
         return categoryRepository.findByStatus(status);
     }
@@ -43,7 +39,4 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    public boolean existsByName(String name) {
-        return categoryRepository.existsByName(name);
-    }
 }

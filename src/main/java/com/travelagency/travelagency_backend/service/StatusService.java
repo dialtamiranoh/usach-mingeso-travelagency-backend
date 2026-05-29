@@ -26,10 +26,6 @@ public class StatusService {
         return statusRepository.findByEntityType(entityType);
     }
 
-    public Optional<StatusEntity> findByNameAndEntityType(String name, String entityType) {
-        return statusRepository.findByNameAndEntityType(name, entityType);
-    }
-
     public StatusEntity save(StatusEntity status) {
         return statusRepository.save(status);
     }
@@ -42,7 +38,4 @@ public class StatusService {
         statusRepository.deleteById(id);
     }
 
-    public boolean existsByNameAndEntityType(String name, String entityType) {
-        return statusRepository.existsByNameAndEntityType(name, entityType);
-    }
 }

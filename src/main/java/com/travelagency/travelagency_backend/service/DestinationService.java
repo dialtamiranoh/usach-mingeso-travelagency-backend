@@ -23,10 +23,6 @@ public class DestinationService {
         return destinationRepository.findById(id);
     }
 
-    public Optional<DestinationEntity> findByName(String name) {
-        return destinationRepository.findByName(name);
-    }
-
     public List<DestinationEntity> findByStatus(StatusEntity status) {
         return destinationRepository.findByStatus(status);
     }
@@ -43,7 +39,4 @@ public class DestinationService {
         destinationRepository.deleteById(id);
     }
 
-    public boolean existsByName(String name) {
-        return destinationRepository.existsByName(name);
-    }
 }

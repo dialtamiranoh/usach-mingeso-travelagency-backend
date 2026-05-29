@@ -48,7 +48,4 @@ public class PromotionService {
         promotionRepository.deleteById(id);
     }
 
-    public boolean existsById(Long id) {
-        return promotionRepository.existsById(id);
-    }
 }

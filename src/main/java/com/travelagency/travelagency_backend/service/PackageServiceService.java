@@ -23,10 +23,6 @@ public class PackageServiceService {
         return packageServiceRepository.findById(id);
     }
 
-    public Optional<PackageServiceEntity> findByName(String name) {
-        return packageServiceRepository.findByName(name);
-    }
-
     public List<PackageServiceEntity> findByStatus(StatusEntity status) {
         return packageServiceRepository.findByStatus(status);
     }
@@ -43,7 +39,4 @@ public class PackageServiceService {
         packageServiceRepository.deleteById(id);
     }
 
-    public boolean existsByName(String name) {
-        return packageServiceRepository.existsByName(name);
-    }
 }

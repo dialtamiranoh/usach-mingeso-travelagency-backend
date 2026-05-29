@@ -35,10 +35,6 @@ public class PaymentService {
         return paymentRepository.findByTransactionCode(transactionCode);
     }
 
-    public boolean existsByBooking(BookingEntity booking) {
-        return paymentRepository.existsByBooking(booking);
-    }
-
     public List<PaymentEntity> findByStatus(StatusEntity status) {
         return paymentRepository.findByStatus(status);
     }
@@ -55,43 +51,40 @@ public class PaymentService {
         paymentRepository.deleteById(id);
     }
 
-    public boolean existsById(Long id) {
-        return paymentRepository.existsById(id);
-    }
 
     @Transactional
     public PaymentEntity processPayment(Long bookingId, String cardNumber, String cardExpiry, String cardCvv) {
 
-        // 1. Obtener reserva
+        //1. Obtener reserva
         BookingEntity booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
-        // 2. Validar estado de la reserva
+        //2. Validar estado de la reserva
         if (!booking.getStatus().getName().equals("PENDING_PAYMENT")) {
             throw new RuntimeException("La reserva no está en estado PENDING_PAYMENT");
         }
 
-        // 3. Validar que no tenga pago previo
+        //3. Validar que no tenga pago previo
         if (paymentRepository.existsByBooking(booking)) {
             throw new RuntimeException("Esta reserva ya tiene un pago registrado");
         }
 
-        // 4. Validar que no esté expirada
+        //4. Validar que no esté expirada
         if (booking.getExpiresAt() != null && booking.getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("La reserva ha expirado");
         }
 
-        // 5. Obtener estado APPROVED para el pago
+        //5. Obtener estado APPROVED para el pago
         StatusEntity approvedStatus = statusRepository
                 .findByNameAndEntityType("APPROVED", "PAYMENT")
                 .orElseThrow(() -> new RuntimeException("Estado APPROVED no encontrado"));
 
-        // 6. Obtener estado CONFIRMED para la reserva
+        //6. Obtener estado CONFIRMED para la reserva
         StatusEntity confirmedStatus = statusRepository
                 .findByNameAndEntityType("CONFIRMED", "BOOKING")
                 .orElseThrow(() -> new RuntimeException("Estado CONFIRMED no encontrado"));
 
-        // 7. Crear pago
+        //7. Crear pago
         PaymentEntity payment = new PaymentEntity();
         payment.setBooking(booking);
         payment.setAmount(booking.getFinalAmount());
@@ -103,7 +96,7 @@ public class PaymentService {
 
         paymentRepository.save(payment);
 
-        // 8. Actualizar estado de la reserva a CONFIRMED
+        //8. Actualizar estado de la reserva a CONFIRMED
         booking.setStatus(confirmedStatus);
         bookingRepository.save(booking);
 

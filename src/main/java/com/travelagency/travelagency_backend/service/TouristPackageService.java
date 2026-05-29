@@ -34,22 +34,6 @@ public class TouristPackageService {
         return touristPackageRepository.findByStatus(status);
     }
 
-    public List<TouristPackageEntity> findByDestination(DestinationEntity destination) {
-        return touristPackageRepository.findByDestination(destination);
-    }
-
-    public List<TouristPackageEntity> findByCategory(CategoryEntity category) {
-        return touristPackageRepository.findByCategory(category);
-    }
-
-    public List<TouristPackageEntity> findBySeason(SeasonEntity season) {
-        return touristPackageRepository.findBySeason(season);
-    }
-
-    public List<TouristPackageEntity> findByType(PackageTypeEntity type) {
-        return touristPackageRepository.findByType(type);
-    }
-
 
     public List<TouristPackageEntity> findAvailableWithFilters(
             DestinationEntity destination,
@@ -80,6 +64,27 @@ public class TouristPackageService {
 
     public TouristPackageEntity update(TouristPackageEntity touristPackage) {
         validatePackage(touristPackage);
+
+        TouristPackageEntity existing = touristPackageRepository.findById(touristPackage.getId())
+                .orElseThrow(() -> new RuntimeException("Paquete no encontrado"));
+
+        boolean hasActiveBookings = bookingRepository.findByTouristPackage(existing).stream()
+                .anyMatch(b -> b.getStatus().getName().equals("PENDING_PAYMENT")
+                        || b.getStatus().getName().equals("CONFIRMED"));
+
+        if (hasActiveBookings) {
+            // Validar que no cambien fechas
+            if (!existing.getStartDate().equals(touristPackage.getStartDate()) ||
+                    !existing.getEndDate().equals(touristPackage.getEndDate())) {
+                throw new RuntimeException("No se pueden modificar las fechas de un paquete con reservas activas");
+            }
+            // Validar que cupos totales no sean menores a los ya reservados
+            long reservedSlots = existing.getTotalSlots() - existing.getAvailableSlots();
+            if (touristPackage.getTotalSlots() < reservedSlots) {
+                throw new RuntimeException("Los cupos totales no pueden ser menores a los cupos ya reservados (" + reservedSlots + ")");
+            }
+        }
+
         return touristPackageRepository.save(touristPackage);
     }
 
@@ -97,11 +102,6 @@ public class TouristPackageService {
             throw new RuntimeException("No se puede eliminar un paquete con reservas activas");
         }
         touristPackageRepository.deleteById(id);
-    }
-
-
-    public boolean existsById(Long id) {
-        return touristPackageRepository.existsById(id);
     }
 
     private void validatePackage(TouristPackageEntity pkg) {

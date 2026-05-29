@@ -51,10 +51,6 @@ public class BookingService {
         return bookingRepository.findByUserAndStatus(user, status);
     }
 
-    public long countConfirmedBookingsByUser(UserEntity user) {
-        return bookingRepository.countConfirmedBookingsByUser(user);
-    }
-
     public List<BookingEntity> findExpiredBookings() {
         return bookingRepository.findExpiredBookings(LocalDateTime.now());
     }
@@ -68,10 +64,6 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-
-    public boolean existsById(Long id) {
-        return bookingRepository.existsById(id);
-    }
 
     @Transactional
     public BookingEntity createBooking(Long packageId, String keycloakId, int passengerCount) {
